@@ -1,0 +1,10 @@
+﻿*WARNING*
+It is absolutely better that you never use 'static' access modifier everywhere like classes, methods, variables etc.
+When you declare a static class or something, these kinda things are stored some memory space.
+Anyway, Cho-rong said that just don't use 'static' access modifier.
+
+*Feedback*
+First, you've gotta finish just simple implementation 
+without contemplating exceptions. And then, let you handle exceptions gradually.
+
+*Supplement Points*

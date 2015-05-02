@@ -1,0 +1,7 @@
+﻿Programmer : JUNKYU PARK
+Duration of Implementation : 2015.04.23. ~ 2015.04.27
+Purpose : the assignment of En# study
+Detail : Make the Course Registering System with the Excel file whose name is about "수강편람".
+
+Admin ID		 : 100000
+Admin Password	 : 00000000
