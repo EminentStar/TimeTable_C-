@@ -13,7 +13,7 @@ using TimeTable.Useful_Functions;
 
 
 namespace TimeTable
-{//이게 최선입니다.........................................ㅠㅠ
+{
     class Program
     {
         static void Main(string[] args)
