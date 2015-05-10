@@ -54,90 +54,59 @@ namespace TimeTable.Models
         }
         public User(User param_user)
         {
-            this.user_id = param_user.GetUser_id();
-            this.user_name = param_user.GetUser_name();
-            this.user_passwd = param_user.GetUser_passwd();
-            this.user_phone = param_user.GetUser_phone();
-            this.user_email = param_user.GetUser_email();
-            this.user_admin = param_user.GetUser_admin();
-            this.check_signed_in = param_user.GetCheck_signed_in();
+            this.user_id = param_user.User_id;
+            this.user_name = param_user.User_name;
+            this.user_passwd = param_user.User_passwd;
+            this.user_phone = param_user.User_phone;
+            this.user_email = param_user.User_email;
+            this.user_admin = param_user.User_admin;
+            this.check_signed_in = param_user.Check_signed_in;
         }
 
-        public int GetUser_id()
+        public int User_id
         {
-            return user_id;
+            get { return user_id; }
+            set { user_id = value; }
         }
-        public string GetUser_name()
+        public string User_name
         {
-            return user_name;
+            get { return user_name; }
+            set { user_name = value; }
         }
-        public string GetUser_passwd()
+        public string User_passwd
         {
-            return user_passwd;
+            get { return user_passwd; }
+            set { user_passwd = value; }
         }
-        public string GetUser_phone()
+        public string User_phone
         {
-            return user_phone;
+            get { return user_phone; }
+            set { user_phone = value; }
         }
-        public string GetUser_email()
+        public string User_email
         {
-            return user_email;
+            get { return user_email; }
+            set { user_email = value; }
         }
-        public int GetUser_admin()
+        public int User_admin
         {
-            return user_admin;
+            get { return user_admin; }
+            set { user_admin = value; }
         }
-        public int GetCheck_signed_in()
+        public int Check_signed_in
         {
-            return check_signed_in;
+            get { return check_signed_in; }
+            set { check_signed_in = value; }
         }
-        public int GetCourse_count()
+        public int Course_count
         {
-            return course_count;
+            get { return course_count; }
+            set { course_count = value; }
         }
-        public int GetFavorite_count()
+        public int Favorite_count
         {
-            return favorite_count;
+            get { return favorite_count; }
+            set { favorite_count = value; }
         }
-
-        public void SetUser_id(int param_id)
-        {
-            this.user_id = param_id;
-        }
-
-        public void SetUser_name(string param_name)
-        {
-            this.user_name = param_name;
-        }
-        public void SetUser_passwd(string param_passwd)
-        {
-            this.user_passwd = param_passwd;
-        }
-        public void SetUser_phone(string param_phone)
-        {
-            this.user_phone = param_phone;
-        }
-        public void SetUser_email(string param_email)
-        {
-            this.user_email = param_email;
-        }
-        public void SetUser_admin(int param_admin)
-        {
-            this.user_admin = param_admin;
-        }
-
-        public void SetCheck_signed_in(int param_check_signed_in)
-        {
-            this.check_signed_in = param_check_signed_in;
-        }
-        public void SetCourse_count(int param_course_count)
-        {
-            this.course_count = param_course_count;
-        }
-        public void SetFavorite_count(int param_favorite_count)
-        {
-            this.favorite_count = param_favorite_count;
-        }
-
     }
 }

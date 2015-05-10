@@ -57,7 +57,7 @@ namespace TimeTable.Useful_Functions
 
             if (check_same_passwd)
             {
-                check_correct_passwd = param_has_signed_in_user.GetUser_passwd().Equals( check_password01 );
+                check_correct_passwd = param_has_signed_in_user.User_passwd.Equals( check_password01 );
                 if (check_correct_passwd)
                 {
                     Console.WriteLine("비밀번호가 일치합니다.");

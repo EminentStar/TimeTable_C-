@@ -74,7 +74,7 @@ namespace TimeTable.Services
             {
                 homeService.Clear();
 
-                Console.WriteLine("                                                         " + param_has_signed_in_user.GetUser_name() + " 학생 반갑습니다. ");
+                Console.WriteLine("                                                         " + param_has_signed_in_user.User_name + " 학생 반갑습니다. ");
                 StudentMenuIntro();
 
                 choice_Menu = jkAppExceptions.GetDigit();
@@ -98,7 +98,7 @@ namespace TimeTable.Services
                         lecture.MakeTableFile(param_has_signed_in_user, timeTable);
                         break;
                     case 6:     //Let you sign out, guys
-                        param_has_signed_in_user.SetCheck_signed_in(0);
+                        param_has_signed_in_user.Check_signed_in = 0;
                         break;
                     case 7:     //leave University
                         LeaveUniversity(con, param_has_signed_in_user);
@@ -130,7 +130,7 @@ namespace TimeTable.Services
                         RemoveUser(con);
                         break;
                     case 3:     //logout
-                        param_has_signed_in_user.SetCheck_signed_in(0);
+                        param_has_signed_in_user.Check_signed_in = 0;
                         break;
                     default:
                         continue;
@@ -151,7 +151,7 @@ namespace TimeTable.Services
         public void LeaveUniversity(SqlCeConnection con, User param_has_signed_in_user)
         {
             string ans = null;
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             EnrollmentDBService enrollmentDBService = EnrollmentDBService.GetInstance();
             UsersDBService usersDBService = UsersDBService.GetInstance();
 

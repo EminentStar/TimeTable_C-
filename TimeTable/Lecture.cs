@@ -125,7 +125,7 @@ namespace TimeTable
 
                 Console.WriteLine("관심과목 등록 현황\n");
 
-                enrollmentDBService.SelectFavoriteLecture(con, param_has_signed_in_user.GetUser_id());
+                enrollmentDBService.SelectFavoriteLecture(con, param_has_signed_in_user.User_id);
 
                 Console.WriteLine("                                 1. 관심과목 담기 ");
                 Console.WriteLine("                                 2. 관심과목 삭제  ");
@@ -154,7 +154,7 @@ namespace TimeTable
         public void RegisterFavoriteLecture(User param_has_signed_in_user, SqlCeConnection con)
         {
             const int MAX_F_GRADE_SUM = 25;
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             int tempNum, rowCount, columnCount, grade = 0, totalGrade = 0, i, j;
             string tempStr = null;
             Enrollment enrollment = null;
@@ -197,7 +197,7 @@ namespace TimeTable
                                 if (data.GetValue(i, j) == null)
                                     data.SetValue("", i, j);
                             }
-                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.GetUser_id(),
+                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.User_id,
                                                         data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
                                                         data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
                                                         data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
@@ -216,7 +216,7 @@ namespace TimeTable
                                 break;
                             }
 
-                            usersDBService.IncreaseFavoriteCount(con, param_has_signed_in_user.GetUser_id(), grade);
+                            usersDBService.IncreaseFavoriteCount(con, param_has_signed_in_user.User_id, grade);
 
                             enrollmentDBService.InsertFavoriteLecture(con, enrollment);
 
@@ -236,7 +236,7 @@ namespace TimeTable
         {
             int tempC_index = 0;
             int tempGrade = 0;
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
 
             //1. print the list of the favorite Lectures
             while (true)
@@ -280,8 +280,8 @@ namespace TimeTable
                 homeService.Clear();
 
                 Console.WriteLine("현재 수강신청 현황\n");
-                Console.WriteLine("현재 총 수강신청 학점 : {0}", usersDBService.GetCourseCount(con, param_has_signed_in_user.GetUser_id()));
-                enrollmentDBService.SelectLecture(con, param_has_signed_in_user.GetUser_id());
+                Console.WriteLine("현재 총 수강신청 학점 : {0}", usersDBService.GetCourseCount(con, param_has_signed_in_user.User_id));
+                enrollmentDBService.SelectLecture(con, param_has_signed_in_user.User_id);
 
                 Console.WriteLine("                                 1. 관심과목중에서 신청 ");
                 Console.WriteLine("                                 2. 과목명으로 검색하여 신청 ");
@@ -312,7 +312,7 @@ namespace TimeTable
 
         public void RegisterLectureByFavorite(User param_has_signed_in_user, SqlCeConnection con)
         {
-            int tempInt = 0, grade = 0, totalGrade = 0, userID = param_has_signed_in_user.GetUser_id();
+            int tempInt = 0, grade = 0, totalGrade = 0, userID = param_has_signed_in_user.User_id;
             const int MAX_GRADE_SUM = 18;
 
             Enrollment enrollment = null;
@@ -395,7 +395,7 @@ namespace TimeTable
         public void RegisterLectureBySearching(User param_has_signed_in_user, SqlCeConnection con)
         {
             int tempInt = 0, grade = 0, totalGrade = 0, rowCount, columnCount, i, j;
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             const int MAX_GRADE_SUM = 18;
             string tempStr = null;
             Enrollment enrollment = null;
@@ -433,7 +433,7 @@ namespace TimeTable
                                     data.SetValue("", i, j);
                             }
 
-                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.GetUser_id(),
+                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.User_id,
                                                         data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
                                                         data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
                                                         data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
@@ -625,7 +625,7 @@ namespace TimeTable
 
         public void RemoveLecture(User param_has_signed_in_user, SqlCeConnection con)
         {
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             int tempNo = 0, grade = 0;
             Enrollment tempEnrollment = null;
 
@@ -674,7 +674,7 @@ namespace TimeTable
 
         public string[,] GetEntireTimeTable(SqlCeConnection con, User param_has_signed_in_user)
         {
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             Dictionary<string, string> lecTimeDic = enrollmentDBService.FetchLectureDic(con, userID);
             string[,] timeTable = new string[21, 6];
 
@@ -690,7 +690,7 @@ namespace TimeTable
             String[,] timeTable = new String[21, 6];
             int rowCount = timeTable.GetLength(0);
             int columnCount = timeTable.GetLength(1);
-            int userID = param_has_signed_in_user.GetUser_id();
+            int userID = param_has_signed_in_user.User_id;
             int i, j;
             Dictionary<string, string> lecTimeDic = null;
 
@@ -702,7 +702,7 @@ namespace TimeTable
 
             SetTimeTable(timeTable, lecTimeDic);
 
-            Console.WriteLine("{1} ({0})의 수강신청 시간표", param_has_signed_in_user.GetUser_id(), param_has_signed_in_user.GetUser_name());
+            Console.WriteLine("{1} ({0})의 수강신청 시간표", param_has_signed_in_user.User_id, param_has_signed_in_user.User_name);
             //Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------");
             Console.WriteLine("──────────────────────────────────────────────────────────────────────────");
             for (i = 0; i < rowCount; i++)
@@ -874,7 +874,7 @@ namespace TimeTable
                 }
                 xlWorkSheet.Columns[7].ColumnWidth = 47;
 
-                xlWorkSheet.Cells[1, 7] = param_has_signed_in_user.GetUser_id() + " " + param_has_signed_in_user.GetUser_name() + "의 2015학년도 1학기 수강신청 내역";
+                xlWorkSheet.Cells[1, 7] = param_has_signed_in_user.User_id + " " + param_has_signed_in_user.User_name + "의 2015학년도 1학기 수강신청 내역";
 
                 for (i = 0; i < rowCount; i++)
                 {

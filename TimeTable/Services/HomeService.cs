@@ -24,10 +24,10 @@ namespace TimeTable.Services
         {
             return homeService;
         }
-        
+
         JKAppExceptions jkAppExceptions = JKAppExceptions.GetInstance();
         UsersDBService usersDBService = UsersDBService.GetInstance();
-        
+
 
         public void LoginEntry(SqlCeConnection con)
         {
@@ -45,7 +45,7 @@ namespace TimeTable.Services
                  * 
                  */
 
-                if (admin_check.GetUser_id() == 0) //Exit.
+                if (admin_check.User_id == 0) //Exit.
                 {
                     break;
                 }
@@ -54,20 +54,20 @@ namespace TimeTable.Services
                     continue;
                 }
 
-                if (admin_check.GetUser_admin() == 0)
+                if (admin_check.User_admin == 0)
                 {// not an admin user
                     //go to login as an user
                     mainService.UserMenus(con, admin_check);
                     //has_signed_in_user.SetCheck_signed_in(0);
                     Console.WriteLine("안전히 로그아웃되었습니다. ^^ 감사합니다.");
-                    usersDBService.ChangeSession(con, admin_check.GetUser_id(), 0);
+                    usersDBService.ChangeSession(con, admin_check.User_id, 0);
                     Thread.Sleep(500);
                 }
                 else
                 {
                     //admin user sign-in
                     mainService.AdminMenus(con, admin_check);
-                    usersDBService.ChangeSession(con, admin_check.GetUser_id(), 0);
+                    usersDBService.ChangeSession(con, admin_check.User_id, 0);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace TimeTable.Services
                     Clear();
                     admin_check = SignIn(con);
 
-                    if (admin_check.GetUser_id() == 0)
+                    if (admin_check.User_id == 0)
                         continue;
                     else
                         break;
@@ -114,7 +114,7 @@ namespace TimeTable.Services
                 {
                     //Exit the program
                     Clear();
-                    admin_check.SetUser_id(0);
+                    admin_check.User_id = 0;
                     break;
                 }
                 else
@@ -139,16 +139,16 @@ namespace TimeTable.Services
                 Console.WriteLine("                                 ━━━━");
                 Console.WriteLine("                                │로그인│");
                 Console.WriteLine("                                 ━━━━");
-                
+
                 Console.Write("학번/아이디 : ");
-                signInForm.SetUser_id(jkAppExceptions.GetNumber());
+                signInForm.User_id = jkAppExceptions.GetNumber();
 
                 Console.Write("PASSWORD : ");
-                signInForm.SetUser_passwd(passwdC.HidePassword()); //set the password form
+                signInForm.User_passwd = passwdC.HidePassword(); //set the password form
 
                 Console.WriteLine();
 
-                if (usersDBService.SearchID(con, signInForm.GetUser_id()) == 0)
+                if (usersDBService.SearchID(con, signInForm.User_id) == 0)
                 {
                     //the id which a person typed doesn't exist.
                     Console.WriteLine("존재하지 않는 학번/아이디 입니다. 학번/아이디를 확인하여주십시오. ");
@@ -161,7 +161,7 @@ namespace TimeTable.Services
                         break;
                     }
                 }
-                else if (usersDBService.SearchID(con, signInForm.GetUser_id()) == 1)
+                else if (usersDBService.SearchID(con, signInForm.User_id) == 1)
                 {
                     //the id exists in DB
                 }
@@ -174,8 +174,8 @@ namespace TimeTable.Services
                 {
                     Console.WriteLine("로그인 하셨습니다.");
 
-                    usersDBService.ChangeSession(con, signInForm.GetUser_id(), 1); //kinda session
-                    userForCheck = usersDBService.FetchID(con, signInForm.GetUser_id());
+                    usersDBService.ChangeSession(con, signInForm.User_id, 1); //kinda session
+                    userForCheck = usersDBService.FetchID(con, signInForm.User_id);
 
                     Thread.Sleep(500);
                     break;
@@ -193,7 +193,7 @@ namespace TimeTable.Services
                         userForCheck = new User();
                         break;
                     }
-                        
+
                 }
             }
             return userForCheck;
@@ -222,7 +222,7 @@ namespace TimeTable.Services
             Console.Write("성명(2-18자 이내의 한글) : ");
             temp_str = Console.ReadLine();
             reg1 = regex1.IsMatch(temp_str);
-            signUpForm.SetUser_name(temp_str);
+            signUpForm.User_name = temp_str;
 
             //set your id
             while (true)
@@ -240,7 +240,7 @@ namespace TimeTable.Services
                     break;
                 }
 
-                signUpForm.SetUser_id(temp_int);
+                signUpForm.User_id = temp_int;
                 if (usersDBService.SearchID(con, temp_int) == 1)
                 {
                     //the id you've typed already exists
@@ -259,23 +259,23 @@ namespace TimeTable.Services
             Console.Write("비밀번호 (8-16자 이내의 대소문자 영문 혹은 숫자) : ");
             temp_str = passwdC.HidePassword();
             reg3 = regex3.IsMatch(temp_str);
-            signUpForm.SetUser_passwd(temp_str); //set the password form
+            signUpForm.User_passwd = temp_str; //set the password form
 
             //set your phone number
             Console.Write("휴대폰 번호 (형식 => 010-4242-3843 ) : ");
             temp_str = Console.ReadLine();
             reg4 = regex4.IsMatch(temp_str);
-            signUpForm.SetUser_phone(temp_str);
+            signUpForm.User_phone = temp_str ;
 
             //set your e-mail address
             Console.Write("E-MAIL (형식 => junk3843@naver.com) : ");
             temp_str = Console.ReadLine();
             reg5 = regex5.IsMatch(temp_str);
-            signUpForm.SetUser_email(temp_str);
+            signUpForm.User_email = temp_str;
 
-            signUpForm.SetUser_admin(0);
-            signUpForm.SetCourse_count(0);
-            signUpForm.SetFavorite_count(0);
+            signUpForm.User_admin = 0;
+            signUpForm.Course_count = 0;
+            signUpForm.Favorite_count = 0;
 
             Console.WriteLine();
             Console.WriteLine();

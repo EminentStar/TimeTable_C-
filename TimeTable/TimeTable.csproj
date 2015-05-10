@@ -63,6 +63,7 @@
     <Content Include="Information\consideration.txt" />
     <Content Include="Information\Database.txt" />
     <Content Include="Information\general_Info.txt" />
+    <Content Include="Information\Project_Modification.txt" />
     <Content Include="Information\UML\TimeTable_Usecase_Model.PNG" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,21 @@
+﻿1. get, set 메서드 c#식으로 전부 변경
+
+public string GetUser_id(){
+	return user_id;
+}
+public void SetUser_id(string paramUser_id)
+{
+	user_id = paramUser_id;
+}
+
+=>
+
+
+public int User_id
+        {
+            get { return user_id; }
+            set { user_id = value; }
+        }
+
+
+

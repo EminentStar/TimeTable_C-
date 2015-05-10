@@ -38,8 +38,8 @@ namespace TimeTable.DB
                 cmd.Transaction = tran;
 
                 //쿼리 생성 : Insert 쿼리
-                cmd.CommandText = "SELECT COUNT(*) FROM Users WHERE user_id = " + paramUser.GetUser_id() +
-                                  " AND user_passwd = '" + paramUser.GetUser_passwd() + "'";
+                cmd.CommandText = "SELECT COUNT(*) FROM Users WHERE user_id = " + paramUser.User_id +
+                                  " AND user_passwd = '" + paramUser.User_passwd + "'";
                 idCount = (Int32)cmd.ExecuteScalar(); //return the number of the first row in the first column
             }
             catch (System.Exception ex)
@@ -50,9 +50,9 @@ namespace TimeTable.DB
         }
 
         public int SearchID(SqlCeConnection con, int param_id)
-        {        
+        {
             int idCount = 0;
-            
+
             try
             {
                 SqlCeCommand cmd = new SqlCeCommand();
@@ -101,7 +101,7 @@ namespace TimeTable.DB
                     Console.Write("│");
                     Console.Write(reader["user_phone"].ToString().PadLeft(13, ' '));
                     Console.Write("│");
-                    Console.Write(reader["user_email"].ToString().PadLeft(50,' '));
+                    Console.Write(reader["user_email"].ToString().PadLeft(50, ' '));
                     Console.Write("│");
                     Console.Write(reader["course_count"].ToString().PadLeft(8, ' '));
                     Console.Write("│");
@@ -136,13 +136,13 @@ namespace TimeTable.DB
 
                 if (reader.Read())
                 {
-                    tempUser.SetUser_id(Convert.ToInt32(reader["user_id"]));
-                    tempUser.SetUser_name(Convert.ToString(reader["user_name"]));
-                    tempUser.SetUser_passwd(Convert.ToString(reader["user_passwd"]));
-                    tempUser.SetUser_phone(Convert.ToString(reader["user_phone"]));
-                    tempUser.SetUser_email(Convert.ToString(reader["user_email"]));
-                    tempUser.SetUser_admin(Convert.ToInt32(reader["user_admin"]));
-                    tempUser.SetCheck_signed_in(Convert.ToInt32(reader["check_signed_in"]));
+                    tempUser.User_id = Convert.ToInt32(reader["user_id"]);
+                    tempUser.User_name = Convert.ToString(reader["user_name"]);
+                    tempUser.User_passwd = Convert.ToString(reader["user_passwd"]);
+                    tempUser.User_phone = Convert.ToString(reader["user_phone"]);
+                    tempUser.User_email = Convert.ToString(reader["user_email"]);
+                    tempUser.User_admin = Convert.ToInt32(reader["user_admin"]);
+                    tempUser.Check_signed_in = Convert.ToInt32(reader["check_signed_in"]);
                 }
             }
             catch (System.Exception ex)
@@ -155,12 +155,12 @@ namespace TimeTable.DB
         public int InsertID(SqlCeConnection con, User param_SignUpForm)
         {
             int returnValue = -1;
-            
+
             try
             {
                 SqlCeCommand cmd = new SqlCeCommand();
                 cmd.Connection = con;
-                
+
                 // 트랜잭션 생성
                 SqlCeTransaction tran = con.BeginTransaction();
                 cmd.Transaction = tran;
@@ -170,15 +170,15 @@ namespace TimeTable.DB
                 //cmd.CommandText = "INSERT INTO Users VALUES(000000,'관리자','00000000','010-0000-0000','admin@gmail.com',1,0)";
 
 
-                cmd.CommandText = "INSERT INTO Users VALUES(" + param_SignUpForm.GetUser_id() +
-                                                           ",'" + param_SignUpForm.GetUser_name() +
-                                                           "','" + param_SignUpForm.GetUser_passwd() +
-                                                           "','" + param_SignUpForm.GetUser_phone() +
-                                                           "','" + param_SignUpForm.GetUser_email() +
-                                                           "'," + param_SignUpForm.GetUser_admin() +
-                                                           "," + param_SignUpForm.GetCheck_signed_in() +
-                                                           "," + param_SignUpForm.GetCourse_count() + 
-                                                           "," + param_SignUpForm.GetFavorite_count() + 
+                cmd.CommandText = "INSERT INTO Users VALUES(" + param_SignUpForm.User_id +
+                                                           ",'" + param_SignUpForm.User_name +
+                                                           "','" + param_SignUpForm.User_passwd +
+                                                           "','" + param_SignUpForm.User_phone +
+                                                           "','" + param_SignUpForm.User_email +
+                                                           "'," + param_SignUpForm.User_admin +
+                                                           "," + param_SignUpForm.Check_signed_in +
+                                                           "," + param_SignUpForm.Course_count +
+                                                           "," + param_SignUpForm.Favorite_count +
                                                            " )";
                 // 쿼리 실행
                 returnValue = cmd.ExecuteNonQuery();
@@ -195,7 +195,7 @@ namespace TimeTable.DB
         }
 
         public void ChangeSession(SqlCeConnection con, int paramInt, int session)
-        {   
+        {
             try
             {
                 SqlCeCommand cmd = new SqlCeCommand();
@@ -326,7 +326,7 @@ namespace TimeTable.DB
                 cmd.Transaction = tran;
 
                 //쿼리 생성 : Insert 쿼리
-                cmd.CommandText = "Select course_count FROM Users WHERE user_id = " + paramUser_id ;
+                cmd.CommandText = "Select course_count FROM Users WHERE user_id = " + paramUser_id;
 
                 SqlCeDataReader reader = cmd.ExecuteReader();
 
