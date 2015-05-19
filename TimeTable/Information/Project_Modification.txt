@@ -18,4 +18,30 @@ public int User_id
         }
 
 
+*Refactoring : 리팩토링은 겉으로 드러나는 코드의 기능은 바꾸지 않으면서 내부 구조를 개선하는 방식으로 소프트웨어 시스템을 수정하는 과정이다. 버그가 생길 가능성을 최소화하며 코드를 정리하는 정제된 방법이다.
+			   코드를 작성하고 난 뒤 설계를 향상시키는 일이다.
+
+
+2.매개변수 세트를 객체로 전환 (p351)
+여러 개의 매개변수가 항상 붙어 다닐 땐 그 매개변수들을 객체로 바꾸자.
+
+
+*조건문 쪼개기 (Decompose Conditional)
+-복잡한 조건문(if-then-else)이 있을 땐, if, then, else 부분을 각각 메서드로 빼내자.
+ex)if(data.before(SUMMER_START) || date.after(SUMMER_END))
+		charge = quantity * winterRate + _winterServiceCharge;
+   else charge = quantity * _summerRate;
+
+=> 
+	if(notSummer(date))
+		charge = winterCharge(quantity);
+	else charge = summerCharge (quantity);
+
+
+3.쓰기 메서드 제거
+-대체할 매개변수 그룹에 해당하는 새 클래스를 작성하고, 그 클래스를 변경불가로 만들자.
+-새 데이터 뭉치에 매개변수 추가를 적용하자. 새 매개변수에 기본 값을 사용하자.
+
+
+
 

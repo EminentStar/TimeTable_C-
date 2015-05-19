@@ -57,7 +57,7 @@ namespace TimeTable.Services
                 if (admin_check.User_admin == 0)
                 {// not an admin user
                     //go to login as an user
-                    mainService.UserMenus(con, admin_check);
+                    mainService.UserMenus(admin_check, con);
                     //has_signed_in_user.SetCheck_signed_in(0);
                     Console.WriteLine("안전히 로그아웃되었습니다. ^^ 감사합니다.");
                     usersDBService.ChangeSession(con, admin_check.User_id, 0);
@@ -66,7 +66,7 @@ namespace TimeTable.Services
                 else
                 {
                     //admin user sign-in
-                    mainService.AdminMenus(con, admin_check);
+                    mainService.AdminMenus(admin_check, con);
                     usersDBService.ChangeSession(con, admin_check.User_id, 0);
                 }
             }
@@ -170,7 +170,7 @@ namespace TimeTable.Services
                     continue;
                 }
 
-                if (usersDBService.CheckPasswd(con, signInForm) == 1)
+                if (usersDBService.CheckPasswd(signInForm, con) == 1)
                 {
                     Console.WriteLine("로그인 하셨습니다.");
 
@@ -283,7 +283,7 @@ namespace TimeTable.Services
             if (reg1 && reg3 && reg4 && reg5)
             {
                 //store new user information into User_Database
-                usersDBService.InsertID(con, signUpForm);
+                usersDBService.InsertID(signUpForm, con);
                 Console.WriteLine(" 세종대학교 자유전공학부 입학을 축하합니다. , 2초 후 로그인 화면으로 넘어갑니다.");
                 Thread.Sleep(2000);
             }

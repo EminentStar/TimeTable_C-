@@ -24,7 +24,7 @@ namespace TimeTable.DB
         }
         JKAppExceptions jkAppExceptions = JKAppExceptions.GetInstance();
 
-        public int CheckPasswd(SqlCeConnection con, User paramUser)
+        public int CheckPasswd(User paramUser, SqlCeConnection con)
         {
             int idCount = 0;
 
@@ -152,7 +152,7 @@ namespace TimeTable.DB
             return tempUser;
         }
 
-        public int InsertID(SqlCeConnection con, User param_SignUpForm)
+        public int InsertID(User param_SignUpForm, SqlCeConnection con)
         {
             int returnValue = -1;
 

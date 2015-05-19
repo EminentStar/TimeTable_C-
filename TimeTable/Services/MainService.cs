@@ -63,7 +63,7 @@ namespace TimeTable.Services
             Console.Write("\n\n메뉴 선택 : ");
         }
 
-        public void UserMenus(SqlCeConnection con, User param_has_signed_in_user)
+        public void UserMenus(User param_has_signed_in_user, SqlCeConnection con)
         {
             int choice_Menu = 0;
             Lecture lecture = new Lecture();
@@ -91,17 +91,17 @@ namespace TimeTable.Services
                         lecture.ManageLectures(param_has_signed_in_user, con);
                         break;
                     case 4:     //go to the Time Table page (you need to follow the format regarding time, day
-                        lecture.ShowTimeTable(con, param_has_signed_in_user);
+                        lecture.ShowTimeTable(param_has_signed_in_user, con);
                         break;
                     case 5:     //go to the page you can make your file or add worksheet concerning your time table
-                        timeTable = lecture.GetEntireTimeTable(con, param_has_signed_in_user);
+                        timeTable = lecture.GetEntireTimeTable(param_has_signed_in_user, con);
                         lecture.MakeTableFile(param_has_signed_in_user, timeTable);
                         break;
                     case 6:     //Let you sign out, guys
                         param_has_signed_in_user.Check_signed_in = 0;
                         break;
                     case 7:     //leave University
-                        LeaveUniversity(con, param_has_signed_in_user);
+                        LeaveUniversity(param_has_signed_in_user, con);
                         break;
                     default:
                         continue;
@@ -109,7 +109,7 @@ namespace TimeTable.Services
             }
         }
 
-        public void AdminMenus(SqlCeConnection con, User param_has_signed_in_user)
+        public void AdminMenus(User param_has_signed_in_user, SqlCeConnection con)
         {
 
             int choice_Menu = 0;
@@ -148,7 +148,7 @@ namespace TimeTable.Services
             //Go back to the previous page
         }
 
-        public void LeaveUniversity(SqlCeConnection con, User param_has_signed_in_user)
+        public void LeaveUniversity(User param_has_signed_in_user, SqlCeConnection con)
         {
             string ans = null;
             int userID = param_has_signed_in_user.User_id;

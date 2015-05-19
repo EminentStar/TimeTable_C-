@@ -151,6 +151,11 @@ namespace TimeTable
             }
         }
 
+        private Boolean NotInRange(int paramNum)
+        {
+            return paramNum < START_NO || paramNum > FINISH_NO;
+        }
+
         public void RegisterFavoriteLecture(User param_has_signed_in_user, SqlCeConnection con)
         {
             const int MAX_F_GRADE_SUM = 25;
@@ -178,7 +183,7 @@ namespace TimeTable
                 {
                     Console.Write("담을 관심과목 NO (숫자만 입력가능) : ");
                     tempNum = jkAppExceptions.GetNumber();
-                    if (tempNum < START_NO || tempNum > FINISH_NO)
+                    if (NotInRange(tempNum))
                     {
                         Console.WriteLine("벗어난 NO 입니다.");
                         if (jkAppExceptions.AskReinputOrGoBack())
@@ -211,7 +216,7 @@ namespace TimeTable
                             if ((totalGrade + grade) > MAX_F_GRADE_SUM)
                             //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
                             {
-                                Console.WriteLine("관심고목 신청 학점이 25학점을 초과할 수 없습니다. ");
+                                Console.WriteLine("관심과목 신청 학점이 25학점을 초과할 수 없습니다. ");
                                 Thread.Sleep(1500);
                                 break;
                             }
@@ -672,7 +677,7 @@ namespace TimeTable
             }
         }
 
-        public string[,] GetEntireTimeTable(SqlCeConnection con, User param_has_signed_in_user)
+        public string[,] GetEntireTimeTable(User param_has_signed_in_user, SqlCeConnection con)
         {
             int userID = param_has_signed_in_user.User_id;
             Dictionary<string, string> lecTimeDic = enrollmentDBService.FetchLectureDic(con, userID);
@@ -685,7 +690,7 @@ namespace TimeTable
             return timeTable;
         }
 
-        public string[,] ShowTimeTable(SqlCeConnection con, User param_has_signed_in_user)
+        public string[,] ShowTimeTable(User param_has_signed_in_user, SqlCeConnection con)
         {
             String[,] timeTable = new String[21, 6];
             int rowCount = timeTable.GetLength(0);
