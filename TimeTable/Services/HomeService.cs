@@ -57,7 +57,7 @@ namespace TimeTable.Services
                 if (admin_check.User_admin == 0)
                 {// not an admin user
                     //go to login as an user
-                    mainService.UserMenus(admin_check, con);
+                    mainService.UserMenus(new LoggedInUser(admin_check, con));
                     //has_signed_in_user.SetCheck_signed_in(0);
                     Console.WriteLine("안전히 로그아웃되었습니다. ^^ 감사합니다.");
                     usersDBService.ChangeSession(con, admin_check.User_id, 0);
@@ -66,7 +66,8 @@ namespace TimeTable.Services
                 else
                 {
                     //admin user sign-in
-                    mainService.AdminMenus(admin_check, con);
+                    //mainService.AdminMenus(admin_check, con); //before
+                    mainService.AdminMenus(new LoggedInUser(admin_check, con));
                     usersDBService.ChangeSession(con, admin_check.User_id, 0);
                 }
             }

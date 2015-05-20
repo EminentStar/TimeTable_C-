@@ -31,6 +31,7 @@ namespace TimeTable.Services
         HomeService homeService = HomeService.GetInstance();
         UsersDBService usersDBService = UsersDBService.GetInstance();
         EnrollmentDBService enrollmentDBService = EnrollmentDBService.GetInstance();
+        TimeTable timeTableObj = TimeTable.GetInstance();
 
         public void StudentMenuIntro()
         {
@@ -63,7 +64,7 @@ namespace TimeTable.Services
             Console.Write("\n\n메뉴 선택 : ");
         }
 
-        public void UserMenus(User param_has_signed_in_user, SqlCeConnection con)
+        public void UserMenus(LoggedInUser paramLoggedInUser)
         {
             int choice_Menu = 0;
             Lecture lecture = new Lecture();
@@ -74,7 +75,7 @@ namespace TimeTable.Services
             {
                 homeService.Clear();
 
-                Console.WriteLine("                                                         " + param_has_signed_in_user.User_name + " 학생 반갑습니다. ");
+                Console.WriteLine("                                                         " + paramLoggedInUser.User.User_name + " 학생 반갑습니다. ");
                 StudentMenuIntro();
 
                 choice_Menu = jkAppExceptions.GetDigit();
@@ -85,23 +86,24 @@ namespace TimeTable.Services
                         lecture.SearchLectures("");
                         break;
                     case 2:     //Go to the page you can manage the list of your favorite lectures such as registering or removing.
-                        lecture.ManageFavoriteLectures(param_has_signed_in_user, con);
+                        lecture.ManageFavoriteLectures(paramLoggedInUser);
                         break;
                     case 3:     //Go to the page which you can manage the list of your real lectures
-                        lecture.ManageLectures(param_has_signed_in_user, con);
+                        lecture.ManageLectures(paramLoggedInUser);
                         break;
                     case 4:     //go to the Time Table page (you need to follow the format regarding time, day
-                        lecture.ShowTimeTable(param_has_signed_in_user, con);
+                        timeTableObj.ShowTimeTable(paramLoggedInUser);
                         break;
                     case 5:     //go to the page you can make your file or add worksheet concerning your time table
-                        timeTable = lecture.GetEntireTimeTable(param_has_signed_in_user, con);
-                        lecture.MakeTableFile(param_has_signed_in_user, timeTable);
+                        timeTable = timeTableObj.GetEntireTimeTable(paramLoggedInUser);
+                        timeTableObj.MakeTableFile(paramLoggedInUser.User, timeTable);
                         break;
                     case 6:     //Let you sign out, guys
-                        param_has_signed_in_user.Check_signed_in = 0;
+                        paramLoggedInUser.User.Check_signed_in = 0;
                         break;
                     case 7:     //leave University
-                        LeaveUniversity(param_has_signed_in_user, con);
+                        //LeaveUniversity(param_has_signed_in_user, con);
+                        LeaveUniversity(paramLoggedInUser);
                         break;
                     default:
                         continue;
@@ -109,7 +111,8 @@ namespace TimeTable.Services
             }
         }
 
-        public void AdminMenus(User param_has_signed_in_user, SqlCeConnection con)
+        //public void AdminMenus(User param_has_signed_in_user, SqlCeConnection con)   //before
+        public void AdminMenus(LoggedInUser paramLoggedInUser) //after modifying
         {
 
             int choice_Menu = 0;
@@ -124,13 +127,14 @@ namespace TimeTable.Services
                 switch (choice_Menu)
                 {
                     case 1:     //Go to the page admin can see the list of students
-                        SeeListOfStudents(con);
+                        SeeListOfStudents(paramLoggedInUser.Con);
                         break;
                     case 2:     //Go to the page admin can delete students
-                        RemoveUser(con);
+                        RemoveUser(paramLoggedInUser.Con);
                         break;
                     case 3:     //logout
-                        param_has_signed_in_user.Check_signed_in = 0;
+                        //param_has_signed_in_user.Check_signed_in = 0;
+                        paramLoggedInUser.User.Check_signed_in = 0;
                         break;
                     default:
                         continue;
@@ -148,10 +152,10 @@ namespace TimeTable.Services
             //Go back to the previous page
         }
 
-        public void LeaveUniversity(User param_has_signed_in_user, SqlCeConnection con)
+        public void LeaveUniversity(LoggedInUser paramLoggedInUser)
         {
             string ans = null;
-            int userID = param_has_signed_in_user.User_id;
+            int userID = paramLoggedInUser.User.User_id;
             EnrollmentDBService enrollmentDBService = EnrollmentDBService.GetInstance();
             UsersDBService usersDBService = UsersDBService.GetInstance();
 
@@ -163,10 +167,10 @@ namespace TimeTable.Services
                 if (ans.Equals("y"))
                 {
                     //remove all of the lectures you've registered and the favorite lectures
-                    enrollmentDBService.DeleteAllLectures(con, userID);
-                    enrollmentDBService.DeleteAllFavoriteLectures(con, userID);
+                    enrollmentDBService.DeleteAllLectures(paramLoggedInUser.Con, userID);
+                    enrollmentDBService.DeleteAllFavoriteLectures(paramLoggedInUser.Con, userID);
                     //remove the ID record from Users DB
-                    usersDBService.DeleteUser(con, userID);
+                    usersDBService.DeleteUser(paramLoggedInUser.Con, userID);
                     Console.WriteLine("학교를 자퇴하였습니다.");
                 }
                 else if (ans.Equals("n"))

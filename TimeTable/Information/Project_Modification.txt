@@ -27,7 +27,11 @@ public int User_id
 
 
 *조건문 쪼개기 (Decompose Conditional)
--복잡한 조건문(if-then-else)이 있을 땐, if, then, else 부분을 각각 메서드로 빼내자.
+복잡한 조건문(if-then-else)이 있을 땐, if, then, else 부분을 각각 메서드로 빼내자.
+-조건이 눈에 잘 ㄷ르어오고 갈라지는 로직 흐름을 알아보기 쉽다. 게다가 왜 그렇게 갈라놨는지도 확실히 알 수 있다.
+
+방법 : 1. if절을 별도의 메서드로 빼내자. 2.then 절고 else 절을 각각의 메서드로 빼내자.
+
 ex)if(data.before(SUMMER_START) || date.after(SUMMER_END))
 		charge = quantity * winterRate + _winterServiceCharge;
    else charge = quantity * _summerRate;
@@ -38,9 +42,17 @@ ex)if(data.before(SUMMER_START) || date.after(SUMMER_END))
 	else charge = summerCharge (quantity);
 
 
-3.쓰기 메서드 제거
+3.매개변수 세트를 객체로 전환
+여러 개의 매개변수가 항상 붙어 다닐 땐 그 매개변수들을 객체로 바꾸자.
+
 -대체할 매개변수 그룹에 해당하는 새 클래스를 작성하고, 그 클래스를 변경불가로 만들자.
+-변경불가 방법을 사용하면 강종 별칭 버그 aliasing bugs가 방지되어 좋다.
 -새 데이터 뭉치에 매개변수 추가를 적용하자. 새 매개변수에 기본 값을 사용하자.
+
+4.클래스 추출
+두 클래스가 처리해야 할 기능이 하나의 클래스에 들어 있을 땐
+ 새 클래스를 만들고 기존 클래스의 관련 필드와 메서드를 새 클래스로 옮기자.
+
 
 
 

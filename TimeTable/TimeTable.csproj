@@ -44,10 +44,12 @@
   <ItemGroup>
     <Compile Include="DB\EnrollmentDBService.cs" />
     <Compile Include="Lecture.cs" />
+    <Compile Include="Models\LoggedInUser.cs" />
     <Compile Include="Models\Enrollment.cs" />
     <Compile Include="Services\HomeService.cs" />
     <Compile Include="Services\MainService.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="TimeTable.cs" />
     <Compile Include="UsefulFunctions\JKAppExceptions.cs" />
     <Compile Include="UsefulFunctions\Password.cs" />
     <Compile Include="Program.cs" />

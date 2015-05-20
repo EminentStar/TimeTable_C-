@@ -114,7 +114,7 @@ namespace TimeTable
             return data;
         }
 
-        public void ManageFavoriteLectures(User param_has_signed_in_user, SqlCeConnection con)
+        public void ManageFavoriteLectures(LoggedInUser paramLoggedInUser)
         {
             int choice_Menu = 0;
 
@@ -125,7 +125,7 @@ namespace TimeTable
 
                 Console.WriteLine("관심과목 등록 현황\n");
 
-                enrollmentDBService.SelectFavoriteLecture(con, param_has_signed_in_user.User_id);
+                enrollmentDBService.SelectFavoriteLecture(paramLoggedInUser.Con, paramLoggedInUser.User.User_id);
 
                 Console.WriteLine("                                 1. 관심과목 담기 ");
                 Console.WriteLine("                                 2. 관심과목 삭제  ");
@@ -138,10 +138,10 @@ namespace TimeTable
                 switch (choice_Menu)
                 {
                     case 1:     //Go to the page that we can search lectures that belong to 'Computer Science' and 'Digital Contents' major
-                        RegisterFavoriteLecture(param_has_signed_in_user, con);
+                        RegisterFavoriteLecture(paramLoggedInUser);
                         break;
                     case 2:     //Go to the page you can manage the list of your favorite lectures such as registering or removing.
-                        RemoveFavoriteLecture(param_has_signed_in_user, con);
+                        RemoveFavoriteLecture(paramLoggedInUser);
                         break;
                     case 3:    //Go back to the previous page
                         break;
@@ -151,15 +151,10 @@ namespace TimeTable
             }
         }
 
-        private Boolean NotInRange(int paramNum)
-        {
-            return paramNum < START_NO || paramNum > FINISH_NO;
-        }
-
-        public void RegisterFavoriteLecture(User param_has_signed_in_user, SqlCeConnection con)
+        public void RegisterFavoriteLecture(LoggedInUser paramLoggedInUser)
         {
             const int MAX_F_GRADE_SUM = 25;
-            int userID = param_has_signed_in_user.User_id;
+            int userID = paramLoggedInUser.User.User_id;
             int tempNum, rowCount, columnCount, grade = 0, totalGrade = 0, i, j;
             string tempStr = null;
             Enrollment enrollment = null;
@@ -202,7 +197,7 @@ namespace TimeTable
                                 if (data.GetValue(i, j) == null)
                                     data.SetValue("", i, j);
                             }
-                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.User_id,
+                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), paramLoggedInUser.User.User_id,
                                                         data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
                                                         data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
                                                         data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
@@ -211,7 +206,7 @@ namespace TimeTable
                                                         data.GetValue(i, 12).ToString());
 
                             grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
-                            totalGrade = usersDBService.GetFavoriteCount(con, userID);
+                            totalGrade = usersDBService.GetFavoriteCount(paramLoggedInUser.Con, userID);
                             
                             if ((totalGrade + grade) > MAX_F_GRADE_SUM)
                             //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
@@ -221,9 +216,9 @@ namespace TimeTable
                                 break;
                             }
 
-                            usersDBService.IncreaseFavoriteCount(con, param_has_signed_in_user.User_id, grade);
+                            usersDBService.IncreaseFavoriteCount(paramLoggedInUser.Con, paramLoggedInUser.User.User_id, grade);
 
-                            enrollmentDBService.InsertFavoriteLecture(con, enrollment);
+                            enrollmentDBService.InsertFavoriteLecture(paramLoggedInUser.Con, enrollment);
 
                             break;
                         }
@@ -237,18 +232,18 @@ namespace TimeTable
             }
         }
 
-        public void RemoveFavoriteLecture(User param_has_signed_in_user, SqlCeConnection con)
+        public void RemoveFavoriteLecture(LoggedInUser paramLoggedInUser)
         {
             int tempC_index = 0;
             int tempGrade = 0;
-            int userID = param_has_signed_in_user.User_id;
+            int userID = paramLoggedInUser.User.User_id;
 
             //1. print the list of the favorite Lectures
             while (true)
             {
                 homeService.Clear();
                 Console.WriteLine("\n");
-                if (enrollmentDBService.SelectFavoriteLecture(con, userID) == 0)
+                if (enrollmentDBService.SelectFavoriteLecture(paramLoggedInUser.Con, userID) == 0)
                 {
                     Thread.Sleep(1500);
                     break;
@@ -259,7 +254,7 @@ namespace TimeTable
                 tempC_index = jkAppExceptions.GetNumber();
 
                 //3. remove the lecture
-                tempGrade = enrollmentDBService.GetGrade(con, userID, tempC_index);
+                tempGrade = enrollmentDBService.GetGrade(paramLoggedInUser.Con, userID, tempC_index);
                 if (tempGrade == 0)
                 {
                     Console.WriteLine("잘못된 입력입니다.");
@@ -268,14 +263,14 @@ namespace TimeTable
                     else
                         break;
                 }
-                enrollmentDBService.DeleteFavoriteLecture(con, userID, tempC_index);
+                enrollmentDBService.DeleteFavoriteLecture(paramLoggedInUser.Con, userID, tempC_index);
                 //4. reduce the total number of favorite lecture of the student
-                usersDBService.DecreaseFavoriteCount(con, userID, tempGrade);
+                usersDBService.DecreaseFavoriteCount(paramLoggedInUser.Con, userID, tempGrade);
                 break;
             }
         }
 
-        public void ManageLectures(User param_has_signed_in_user, SqlCeConnection con)
+        public void ManageLectures(LoggedInUser paramLoggedInUser)
         {
             int choice_Menu = 0;
 
@@ -285,8 +280,8 @@ namespace TimeTable
                 homeService.Clear();
 
                 Console.WriteLine("현재 수강신청 현황\n");
-                Console.WriteLine("현재 총 수강신청 학점 : {0}", usersDBService.GetCourseCount(con, param_has_signed_in_user.User_id));
-                enrollmentDBService.SelectLecture(con, param_has_signed_in_user.User_id);
+                Console.WriteLine("현재 총 수강신청 학점 : {0}", usersDBService.GetCourseCount(paramLoggedInUser.Con, paramLoggedInUser.User.User_id));
+                enrollmentDBService.SelectLecture(paramLoggedInUser.Con, paramLoggedInUser.User.User_id);
 
                 Console.WriteLine("                                 1. 관심과목중에서 신청 ");
                 Console.WriteLine("                                 2. 과목명으로 검색하여 신청 ");
@@ -299,13 +294,13 @@ namespace TimeTable
                 switch (choice_Menu)
                 {
                     case 1:     //Go to the page that you can register lectures among the favorite lecture
-                        RegisterLectureByFavorite(param_has_signed_in_user, con);
+                        RegisterLectureByFavorite(paramLoggedInUser);
                         break;
                     case 2:     //Go to the page you can register lectures by searching the entire list 
-                        RegisterLectureBySearching(param_has_signed_in_user, con);
+                        RegisterLectureBySearching(paramLoggedInUser);
                         break;
                     case 3:
-                        RemoveLecture(param_has_signed_in_user, con);
+                        RemoveLecture(paramLoggedInUser);
                         break;
                     case 4:
                         break;
@@ -315,9 +310,9 @@ namespace TimeTable
             }
         }
 
-        public void RegisterLectureByFavorite(User param_has_signed_in_user, SqlCeConnection con)
+        public void RegisterLectureByFavorite(LoggedInUser paramLoggedInUser)
         {
-            int tempInt = 0, grade = 0, totalGrade = 0, userID = param_has_signed_in_user.User_id;
+            int tempInt = 0, grade = 0, totalGrade = 0, userID = paramLoggedInUser.User.User_id;
             const int MAX_GRADE_SUM = 18;
 
             Enrollment enrollment = null;
@@ -326,7 +321,7 @@ namespace TimeTable
             {
                 homeService.Clear();
                 Console.WriteLine("\n");
-                if (enrollmentDBService.SelectFavoriteLecture(con, userID) == 0)
+                if (enrollmentDBService.SelectFavoriteLecture(paramLoggedInUser.Con, userID) == 0)
                 {
                     Thread.Sleep(1500);
                     break;
@@ -338,7 +333,7 @@ namespace TimeTable
 
                 //check whether the lecture exists in FavoriteEnrollment DB
                 //copy an Enrollment object from FavoriteEnrollment DB
-                enrollment = enrollmentDBService.FetchFavoriteEnrollment(con, userID, tempInt);
+                enrollment = enrollmentDBService.FetchFavoriteEnrollment(paramLoggedInUser.Con, userID, tempInt);
 
                 if (enrollment == null)
                 {
@@ -351,7 +346,7 @@ namespace TimeTable
                 }
 
                 //check the lecture has already been registered by the student
-                if (enrollmentDBService.CheckLectureRegistered(con, userID, enrollment.Course_code) != 0)
+                if (enrollmentDBService.CheckLectureRegistered(paramLoggedInUser.Con, userID, enrollment.Course_code) != 0)
                 {
                     Console.Write("이미 수강신청한 과목입니다.");
                     if (jkAppExceptions.AskReinputOrGoBack())
@@ -361,7 +356,7 @@ namespace TimeTable
                 }
 
                 //*********CHECK_SAME_TIME********************************************************
-                if (!IsNotSameTime(con, userID, enrollment.Course_time))
+                if (!IsNotSameTime(paramLoggedInUser.Con, userID, enrollment.Course_time))
                 {
                     Console.WriteLine("시간표 중복입니다.");
                     if (jkAppExceptions.AskReinputOrGoBack())
@@ -371,7 +366,7 @@ namespace TimeTable
                 }
 
                 grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
-                totalGrade = usersDBService.GetCourseCount(con, userID);
+                totalGrade = usersDBService.GetCourseCount(paramLoggedInUser.Con, userID);
                 
                 if ((totalGrade + grade) > MAX_GRADE_SUM)
                 //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
@@ -382,25 +377,25 @@ namespace TimeTable
                 }
 
                 //delete the lecture from FavoriteEnrollment DB
-                enrollmentDBService.DeleteFavoriteLecture(con, userID, tempInt);
+                enrollmentDBService.DeleteFavoriteLecture(paramLoggedInUser.Con, userID, tempInt);
 
                 //subtract the sum of the lecture you've gotten in FavoriteEnrollment
 
-                usersDBService.DecreaseFavoriteCount(con, userID, grade);
+                usersDBService.DecreaseFavoriteCount(paramLoggedInUser.Con, userID, grade);
 
                 //input the lecture into Enrollment DB
-                enrollmentDBService.InsertLecture(con, enrollment);
+                enrollmentDBService.InsertLecture(paramLoggedInUser.Con, enrollment);
 
                 //increase the sum of the lecture you've registered
-                usersDBService.IncreaseCourseCount(con, userID, grade);
+                usersDBService.IncreaseCourseCount(paramLoggedInUser.Con, userID, grade);
                 break;
             }
         }
 
-        public void RegisterLectureBySearching(User param_has_signed_in_user, SqlCeConnection con)
+        public void RegisterLectureBySearching(LoggedInUser paramLoggedInUser)
         {
             int tempInt = 0, grade = 0, totalGrade = 0, rowCount, columnCount, i, j;
-            int userID = param_has_signed_in_user.User_id;
+            int userID = paramLoggedInUser.User.User_id;
             const int MAX_GRADE_SUM = 18;
             string tempStr = null;
             Enrollment enrollment = null;
@@ -438,7 +433,7 @@ namespace TimeTable
                                     data.SetValue("", i, j);
                             }
 
-                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), param_has_signed_in_user.User_id,
+                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), paramLoggedInUser.User.User_id,
                                                         data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
                                                         data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
                                                         data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
@@ -460,7 +455,7 @@ namespace TimeTable
                     }
 
                     //check the lecture has already been registered by the student
-                    if (enrollmentDBService.CheckLectureRegistered(con, userID, enrollment.Course_code) != 0)
+                    if (enrollmentDBService.CheckLectureRegistered(paramLoggedInUser.Con, userID, enrollment.Course_code) != 0)
                     {
                         Console.Write("이미 수강신청한 과목입니다.");
                         if (jkAppExceptions.AskReinputOrGoBack())
@@ -470,7 +465,7 @@ namespace TimeTable
                     }
 
                     //*********CHECK_SAME_TIME********************************************************
-                    if (!IsNotSameTime(con, userID, enrollment.Course_time))
+                    if (!IsNotSameTime(paramLoggedInUser.Con, userID, enrollment.Course_time))
                     {
                         Console.WriteLine("시간표 중복입니다.");
                         if (jkAppExceptions.AskReinputOrGoBack())
@@ -480,7 +475,7 @@ namespace TimeTable
                     }
 
                     grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
-                    totalGrade = usersDBService.GetCourseCount(con, userID);
+                    totalGrade = usersDBService.GetCourseCount(paramLoggedInUser.Con, userID);
 
                     if ((totalGrade + grade) > MAX_GRADE_SUM)
                     //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
@@ -490,11 +485,11 @@ namespace TimeTable
                         break;
                     }
                     //input the lecture into Enrollment DB
-                    enrollmentDBService.InsertLecture(con, enrollment);
+                    enrollmentDBService.InsertLecture(paramLoggedInUser.Con, enrollment);
 
                     //increase the sum of the lecture you've registered
-                    usersDBService.IncreaseCourseCount(con, userID, grade);
-
+                    usersDBService.IncreaseCourseCount(paramLoggedInUser.Con, userID, grade);
+                
                 
                 break;
             }
@@ -628,9 +623,9 @@ namespace TimeTable
             return isNotSameTime;
         }
 
-        public void RemoveLecture(User param_has_signed_in_user, SqlCeConnection con)
+        public void RemoveLecture(LoggedInUser paramLoggedInUser)
         {
-            int userID = param_has_signed_in_user.User_id;
+            int userID = paramLoggedInUser.User.User_id;
             int tempNo = 0, grade = 0;
             Enrollment tempEnrollment = null;
 
@@ -639,7 +634,7 @@ namespace TimeTable
                 //Print the present registered lectures
                 homeService.Clear();
                 Console.WriteLine("현재 수강신청 현황\n");
-                if(enrollmentDBService.SelectLecture(con, userID) == 0)
+                if (enrollmentDBService.SelectLecture(paramLoggedInUser.Con, userID) == 0)
                 {
                     Thread.Sleep(1000);
                     break;
@@ -650,7 +645,7 @@ namespace TimeTable
                 tempNo = jkAppExceptions.GetNumber();
 
                 //check whether the number you input is in the enrollment DB or not
-                tempEnrollment = enrollmentDBService.FetchEnrollment(con, userID, tempNo);
+                tempEnrollment = enrollmentDBService.FetchEnrollment(paramLoggedInUser.Con, userID, tempNo);
 
                 if (tempEnrollment == null)
                 {
@@ -664,10 +659,10 @@ namespace TimeTable
                 else
                 {
                     //delete the lecture's record in Enrollment DB
-                    enrollmentDBService.DeleteLecture(con, userID, tempNo);
+                    enrollmentDBService.DeleteLecture(paramLoggedInUser.Con, userID, tempNo);
                     //subtract the sum of the grade you've registered
                     grade = Convert.ToInt32(tempEnrollment.Grade.Substring(0, 1));
-                    usersDBService.DecreaseCourseCount(con, userID, grade);
+                    usersDBService.DecreaseCourseCount(paramLoggedInUser.Con, userID, grade);
 
                     Console.WriteLine("수강삭제에 성공하였습니다.");
                 }
@@ -677,234 +672,9 @@ namespace TimeTable
             }
         }
 
-        public string[,] GetEntireTimeTable(User param_has_signed_in_user, SqlCeConnection con)
+        private Boolean NotInRange(int paramNum)
         {
-            int userID = param_has_signed_in_user.User_id;
-            Dictionary<string, string> lecTimeDic = enrollmentDBService.FetchLectureDic(con, userID);
-            string[,] timeTable = new string[21, 6];
-
-            InitializeTimeTable(timeTable);
-
-            SetTimeTable(timeTable, lecTimeDic);
-
-            return timeTable;
-        }
-
-        public string[,] ShowTimeTable(User param_has_signed_in_user, SqlCeConnection con)
-        {
-            String[,] timeTable = new String[21, 6];
-            int rowCount = timeTable.GetLength(0);
-            int columnCount = timeTable.GetLength(1);
-            int userID = param_has_signed_in_user.User_id;
-            int i, j;
-            Dictionary<string, string> lecTimeDic = null;
-
-            homeService.Clear();
-            //get the information of the registered lectures
-            lecTimeDic = enrollmentDBService.FetchLectureDic(con, userID);
-
-            InitializeTimeTable(timeTable);
-
-            SetTimeTable(timeTable, lecTimeDic);
-
-            Console.WriteLine("{1} ({0})의 수강신청 시간표", param_has_signed_in_user.User_id, param_has_signed_in_user.User_name);
-            //Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------");
-            Console.WriteLine("──────────────────────────────────────────────────────────────────────────");
-            for (i = 0; i < rowCount; i++)
-            {
-                Console.Write(timeTable[i, 0] + "│");
-                for (j = 1; j < columnCount; j++)
-                {
-                    if (timeTable[i, j] == null)
-                    {
-                        Console.Write("".PadLeft(25, ' '));
-                    }
-                    else
-                    {
-                        Console.Write(jkAppExceptions.KoreanPadLeft(timeTable[i, j], 25, ' '));
-                    }
-                    Console.Write("│");
-
-                }
-                //Console.WriteLine("\n----------------------------------------------------------------------------------------------------------------------------------------------");
-                Console.WriteLine("\n──────────────────────────────────────────────────────────────────────────");
-            }
-
-            Console.Write("아무키나 입력");
-            Console.ReadLine();
-
-            return timeTable;
-        }
-
-        public void InitializeTimeTable(String[,] paramTimeTable)
-        {
-            int rowCount = paramTimeTable.GetLength(0);
-            int columnCount = paramTimeTable.GetLength(1);
-            int i;
-            DateTime date1 = DateTime.ParseExact("09:00", "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-            DateTime date2;
-
-            paramTimeTable[0, 1] = "월";
-            paramTimeTable[0, 2] = "화";
-            paramTimeTable[0, 3] = "수";
-            paramTimeTable[0, 4] = "목";
-            paramTimeTable[0, 5] = "금";
-
-            paramTimeTable[0, 0] = "           ";
-
-            for (i = 1; i < rowCount; i++)
-            {
-                date2 = date1.AddMinutes(30);
-                paramTimeTable[i, 0] = date1.ToString("HH:mm") + "-" + date2.ToString("HH:mm");
-                date1 = date2;
-            }
-        }
-
-        public void SetTimeTable(string[,] paramArr, Dictionary<string, string> paramDic)
-        {
-            string paramString1, paramString2, paramString3, paramString4;
-            int rowCount = paramArr.GetLength(0);
-            int columnCount = paramArr.GetLength(1);
-            int listLength = paramDic.Count();
-            int addNum = 0;
-            int i = 0, j = 0, k = 0;
-            bool isTwoDay1 = false;
-            DateTime date1, date2;
-            System.TimeSpan diff;
-            int diffCount = 0;
-
-
-
-            foreach (KeyValuePair<string, string> kv in paramDic)
-            {
-                diffCount = 0;
-                addNum = 0;
-
-                paramString1 = kv.Value.Substring(0, 1);
-                paramString2 = kv.Value.Substring(1, 1);
-
-                if (!(paramString2.Equals("0") || paramString2.Equals("1"))) // if tempString2 means day; mind you, two days exist
-                {
-                    isTwoDay1 = true;
-                }
-                else //one day exists
-                {
-                    addNum += 1;
-                }
-
-                paramString3 = kv.Value.Substring(2 - addNum, 5);
-                paramString4 = kv.Value.Substring(8 - addNum, 5);
-
-                date1 = DateTime.ParseExact(paramString3, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-                date2 = DateTime.ParseExact(paramString4, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-                diff = date2.Subtract(date1);
-
-                diffCount += Convert.ToInt32(diff.ToString().Substring(1, 1)) * 2;
-                diffCount += (diff.ToString().Substring(3, 1).Equals("3")) ? 1 : 0;
-
-
-                for (i = 0; i < columnCount; i++)
-                {
-                    if (paramString1.Equals(paramArr[0, i]))
-                    {
-                        for (j = 0;
-                            j < rowCount; j++)
-                        {
-                            if (paramArr[j, 0].Substring(0, 5).Equals(paramString3))
-                            {
-                                for (k = 0; k < diffCount; k++)
-                                {
-                                    paramArr[j + k, i] = kv.Key;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (isTwoDay1)
-                {
-                    for (i = 0; i < columnCount; i++)
-                    {
-                        if (paramString2.Equals(paramArr[0, i]))
-                        {
-                            for (j = 0; j < rowCount; j++)
-                            {
-                                if (paramArr[j, 0].Substring(0, 5).Equals(paramString3))
-                                {
-                                    for (k = 0; k < diffCount; k++)
-                                    {
-                                        paramArr[j + k, i] = kv.Key;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-
-        public void MakeTableFile(User param_has_signed_in_user, string[,] paramTimeTable)
-        {
-            int i = 0, j;
-            int rowCount = paramTimeTable.GetLength(0);
-            int columnCount = paramTimeTable.GetLength(1);
-            string fileName = null;
-            try
-            {
-                homeService.Clear();
-                //First we have to initialize the Excel application Object.
-                Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-                object misValue = System.Reflection.Missing.Value;
-
-
-                //Before creating new Excel Workbook, you should check whether Excel is installed in your system.
-                if (xlApp == null)
-                {
-                    Console.WriteLine("Excel is not properly installed!!");
-                    return;
-                }
-
-                //Then create new Workbook
-                Excel.Workbook xlWorkBook = xlApp.Workbooks.Add(misValue);
-                Excel.Worksheet xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-                //Excel.Range exRange;
-                xlWorkSheet.Columns[1].ColumnWidth = 10;
-                while (i < 5)
-                {
-                    xlWorkSheet.Columns[i + 2].ColumnWidth = 23;
-                    i++;
-                }
-                xlWorkSheet.Columns[7].ColumnWidth = 47;
-
-                xlWorkSheet.Cells[1, 7] = param_has_signed_in_user.User_id + " " + param_has_signed_in_user.User_name + "의 2015학년도 1학기 수강신청 내역";
-
-                for (i = 0; i < rowCount; i++)
-                {
-                    for (j = 0; j < columnCount; j++)
-                    {
-                        xlWorkSheet.Cells[i + 1, j + 1] = paramTimeTable[i, j];
-                    }
-                }
-
-                //In the above code we write the data in the Sheet1, If you want to write data in sheet 2 then you should code like this..
-                /*  xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(2);
-                xlWorkSheet.Cells[1, 1] = "Sheet 2 content";    */
-
-                Console.Write("저장할 파일명 입력 : ");
-                fileName = Console.ReadLine();
-
-                xlWorkBook.SaveAs(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\" + fileName);
-
-                xlApp.Workbooks.Close();
-                xlApp.Quit();
-            }
-            catch (SystemException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            return paramNum < START_NO || paramNum > FINISH_NO;
         }
     }
 }
