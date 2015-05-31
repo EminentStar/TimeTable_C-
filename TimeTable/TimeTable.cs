@@ -17,7 +17,7 @@ namespace TimeTable
         EnrollmentDBService enrollmentDBService = EnrollmentDBService.GetInstance();
         HomeService homeService = HomeService.GetInstance();
         JKAppExceptions jkAppExceptions = JKAppExceptions.GetInstance();
-
+        
         private TimeTable()
         {
         }
@@ -26,7 +26,7 @@ namespace TimeTable
         {
             return timeTableObj;
         }
-
+        
         public string[,] GetEntireTimeTable(LoggedInUser paramLoggedInUser)
         {
             int userID = paramLoggedInUser.User.User_id;

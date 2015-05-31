@@ -59,7 +59,7 @@ namespace TimeTable
                     Console.Write("│");
                     Console.Write(jkAppExceptions.KoreanPadLeft(paramData.GetValue(i, 10).ToString(), 6, ' '));
                     Console.Write("│");
-                    Console.Write((paramData.GetValue(i, 11) != null) ? jkAppExceptions.BytesPadLeft(paramData.GetValue(i, 11).ToString(), 16, ' '): "".PadLeft(16, ' '));
+                    Console.Write((paramData.GetValue(i, 11) != null) ? jkAppExceptions.BytesPadLeft(paramData.GetValue(i, 11).ToString(), 16, ' ') : "".PadLeft(16, ' '));
                     Console.Write("│");
                     Console.Write((paramData.GetValue(i, 12) != null) ? jkAppExceptions.BytesPadLeft(paramData.GetValue(i, 12).ToString(), 13, ' ') : "".PadLeft(13, ' '));
                     Console.Write("│");
@@ -207,7 +207,7 @@ namespace TimeTable
 
                             grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
                             totalGrade = usersDBService.GetFavoriteCount(paramLoggedInUser.Con, userID);
-                            
+
                             if ((totalGrade + grade) > MAX_F_GRADE_SUM)
                             //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
                             {
@@ -367,7 +367,7 @@ namespace TimeTable
 
                 grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
                 totalGrade = usersDBService.GetCourseCount(paramLoggedInUser.Con, userID);
-                
+
                 if ((totalGrade + grade) > MAX_GRADE_SUM)
                 //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
                 {
@@ -417,80 +417,88 @@ namespace TimeTable
             //Print the entire list of the favorite lecture
             while (true)
             {
-               
-                    //input a number for registering a lecture among the favorite list 
-                    Console.Write("신청할 강의NO (숫자만 입력가능) : ");
-                    tempInt = jkAppExceptions.GetNumber();
-                    tempStr = tempInt.ToString();
-                    //check whether the input NO exists in the data array
-                    for (i = 2; i < rowCount; i++)
+
+                //input a number for registering a lecture among the favorite list 
+                Console.Write("신청할 강의NO (숫자만 입력가능) : ");
+                tempInt = jkAppExceptions.GetNumber();
+                if (NotInRange(tempInt))
+                {
+                    Console.WriteLine("벗어난 NO 입니다.");
+                    if (jkAppExceptions.AskReinputOrGoBack())
+                        continue;
+                    else
+                        break;
+                }
+                tempStr = tempInt.ToString();
+                //check whether the input NO exists in the data array
+                for (i = 2; i < rowCount; i++)
+                {
+                    if (data.GetValue(i, 1).Equals(tempStr))
                     {
-                        if (data.GetValue(i, 1).Equals(tempStr))
+                        for (j = 1; j < columnCount; j++)
                         {
-                            for (j = 1; j < columnCount; j++)
-                            {
-                                if (data.GetValue(i, j) == null)
-                                    data.SetValue("", i, j);
-                            }
-
-                            enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), paramLoggedInUser.User.User_id,
-                                                        data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
-                                                        data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
-                                                        data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
-                                                        Convert.ToInt32(data.GetValue(i, 8)), data.GetValue(i, 9).ToString(),
-                                                        data.GetValue(i, 10).ToString(), data.GetValue(i, 11).ToString(),
-                                                        data.GetValue(i, 12).ToString());
-
-                            break;
+                            if (data.GetValue(i, j) == null)
+                                data.SetValue("", i, j);
                         }
-                    }
 
-                    if (enrollment == null)
-                    {
-                        Console.Write("잘못된 입력입니다.");
-                        if (jkAppExceptions.AskReinputOrGoBack())
-                            continue;
-                        else
-                            break;
-                    }
+                        enrollment = new Enrollment(Convert.ToInt32(data.GetValue(i, 1)), paramLoggedInUser.User.User_id,
+                                                    data.GetValue(i, 2).ToString(), data.GetValue(i, 3).ToString(),
+                                                    data.GetValue(i, 4).ToString(), data.GetValue(i, 5).ToString(),
+                                                    data.GetValue(i, 6).ToString(), data.GetValue(i, 7).ToString(),
+                                                    Convert.ToInt32(data.GetValue(i, 8)), data.GetValue(i, 9).ToString(),
+                                                    data.GetValue(i, 10).ToString(), data.GetValue(i, 11).ToString(),
+                                                    data.GetValue(i, 12).ToString());
 
-                    //check the lecture has already been registered by the student
-                    if (enrollmentDBService.CheckLectureRegistered(paramLoggedInUser.Con, userID, enrollment.Course_code) != 0)
-                    {
-                        Console.Write("이미 수강신청한 과목입니다.");
-                        if (jkAppExceptions.AskReinputOrGoBack())
-                            continue;
-                        else
-                            break;
-                    }
-
-                    //*********CHECK_SAME_TIME********************************************************
-                    if (!IsNotSameTime(paramLoggedInUser.Con, userID, enrollment.Course_time))
-                    {
-                        Console.WriteLine("시간표 중복입니다.");
-                        if (jkAppExceptions.AskReinputOrGoBack())
-                            continue;
-                        else
-                            break;
-                    }
-
-                    grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
-                    totalGrade = usersDBService.GetCourseCount(paramLoggedInUser.Con, userID);
-
-                    if ((totalGrade + grade) > MAX_GRADE_SUM)
-                    //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
-                    {
-                        Console.WriteLine("수강신청 학점이 18학점을 초과할 수 없습니다. ");
-                        Thread.Sleep(1500);
                         break;
                     }
-                    //input the lecture into Enrollment DB
-                    enrollmentDBService.InsertLecture(paramLoggedInUser.Con, enrollment);
+                }
 
-                    //increase the sum of the lecture you've registered
-                    usersDBService.IncreaseCourseCount(paramLoggedInUser.Con, userID, grade);
-                
-                
+                if (enrollment == null)
+                {
+                    Console.Write("잘못된 입력입니다.");
+                    if (jkAppExceptions.AskReinputOrGoBack())
+                        continue;
+                    else
+                        break;
+                }
+
+                //check the lecture has already been registered by the student
+                if (enrollmentDBService.CheckLectureRegistered(paramLoggedInUser.Con, userID, enrollment.Course_code) != 0)
+                {
+                    Console.Write("이미 수강신청한 과목입니다.");
+                    if (jkAppExceptions.AskReinputOrGoBack())
+                        continue;
+                    else
+                        break;
+                }
+
+                //*********CHECK_SAME_TIME********************************************************
+                if (!IsNotSameTime(paramLoggedInUser.Con, userID, enrollment.Course_time))
+                {
+                    Console.WriteLine("시간표 중복입니다.");
+                    if (jkAppExceptions.AskReinputOrGoBack())
+                        continue;
+                    else
+                        break;
+                }
+
+                grade = Convert.ToInt32(enrollment.Grade.Substring(0, 1));
+                totalGrade = usersDBService.GetCourseCount(paramLoggedInUser.Con, userID);
+
+                if ((totalGrade + grade) > MAX_GRADE_SUM)
+                //If the sum of the grade that you would get after you register the course is over 18, you can't deserve it. 
+                {
+                    Console.WriteLine("수강신청 학점이 18학점을 초과할 수 없습니다. ");
+                    Thread.Sleep(1500);
+                    break;
+                }
+                //input the lecture into Enrollment DB
+                enrollmentDBService.InsertLecture(paramLoggedInUser.Con, enrollment);
+
+                //increase the sum of the lecture you've registered
+                usersDBService.IncreaseCourseCount(paramLoggedInUser.Con, userID, grade);
+
+
                 break;
             }
         }
@@ -547,6 +555,7 @@ namespace TimeTable
             //check the same day
             foreach (string element in courseTimeList)
             {
+                j = 0;
                 diffCount = 0;
                 DBStringDay1 = element.Substring(0, 1);
                 DBStringDay2 = element.Substring(1, 1);
@@ -565,6 +574,7 @@ namespace TimeTable
                 registeredTime2 = DateTime.ParseExact(DBString4, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
 
                 diffCount += (!DBStringDay1.Equals(paramStringDay1)) ? 1 : 0;
+
                 if (isTwoDay1) //the lecture will be twice a week
                 {
                     if (isTwoDay2)// the registered lecture will be twice a week
@@ -580,7 +590,7 @@ namespace TimeTable
                     {
                         diffCount += (!DBStringDay1.Equals(paramStringDay2)) ? 1 : 0;
                         //different days
-                        if (diffCount == 1)
+                        if (diffCount == 2)
                             continue;
                     }
                 }
@@ -601,25 +611,50 @@ namespace TimeTable
                             continue;
                     }
                 }
-
                 //check time overlapping
-                if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) < 0) && (DateTime.Compare(willBeRegisteredTime2, registeredTime1) <= 0)))
+
+                //if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) < 0) && (DateTime.Compare(willBeRegisteredTime2, registeredTime1) <= 0)))
+                //{
+                //    //you can register this course
+                //    isNotSameTime = true;
+                //    break;
+                //}
+                //else if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) > 0) && (DateTime.Compare(willBeRegisteredTime1, registeredTime2) >= 0)))
+                //{
+                //    //you can register this course
+                //    isNotSameTime = true;
+                //    break;
+                //}
+                if(IsNotOverlapped(willBeRegisteredTime1, willBeRegisteredTime2, registeredTime1, registeredTime2))
                 {
-                    //you can register this course
                     isNotSameTime = true;
-                    break;
-                }
-                else if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) > 0) && (DateTime.Compare(willBeRegisteredTime1, registeredTime2) >= 0)))
-                {
-                    //you can register this course
-                    isNotSameTime = true;
-                    break;
                 }
                 else
                 {
+                    //the time is overlapped
                     isNotSameTime = false;
+                    break;
                 }
             }
+            return isNotSameTime;
+        }
+
+        public Boolean IsNotOverlapped(DateTime willBeRegisteredTime1, DateTime willBeRegisteredTime2, DateTime registeredTime1, DateTime registeredTime2)
+        {
+            Boolean isNotSameTime = false;
+
+            if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) < 0) && (DateTime.Compare(willBeRegisteredTime2, registeredTime1) <= 0)))
+            {
+                //you can register this course
+                isNotSameTime = true;
+
+            }
+            else if (((DateTime.Compare(willBeRegisteredTime1, registeredTime1) > 0) && (DateTime.Compare(willBeRegisteredTime1, registeredTime2) >= 0)))
+            {
+                //you can register this course
+                isNotSameTime = true;
+            }
+
             return isNotSameTime;
         }
 

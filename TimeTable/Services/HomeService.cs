@@ -326,8 +326,8 @@ namespace TimeTable.Services
 
         public void SignInIntro() //Window GUI
         {
-            Console.WriteLine("                                               세종대학교 학사정보시스템에 오신것을 환영합니다.                                                              │_│ㅁ│x│");
-            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Console.WriteLine("                                               세종대학교 학사정보시스템에 오신것을 환영합니다.                                         │_│ㅁ│x│");
+            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }
 
         public void Clear()
