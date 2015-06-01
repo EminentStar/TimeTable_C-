@@ -43,7 +43,7 @@ namespace TimeTable
             {
                 if (((paramData.GetValue(i, 2).Equals("컴퓨터공학과") || paramData.GetValue(i, 2).Equals("디지털콘텐츠학과"))) && paramData.GetValue(i, searchType).ToString().Contains(searchStr))
                 {
-                    //더러운 코드 죄송합니다........... For handling null data........
+                    //For handling null data........
                     Console.Write("│");
                     Console.Write((paramData.GetValue(i, 1) != null) ? paramData.GetValue(i, 1).ToString().PadLeft(4, ' ') : "".PadLeft(4, ' '));
                     Console.Write("│");
