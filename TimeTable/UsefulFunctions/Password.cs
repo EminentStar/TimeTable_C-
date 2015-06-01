@@ -43,7 +43,7 @@ namespace TimeTable.Useful_Functions
             return pass;
         }
 
-        public Boolean checkPassword(User param_has_signed_in_user)
+        public Boolean CheckPassword(User param_has_signed_in_user)
         {
             string check_password01, check_password02;
             Boolean check_same_passwd = false ;

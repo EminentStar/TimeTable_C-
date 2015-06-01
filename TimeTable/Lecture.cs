@@ -155,7 +155,7 @@ namespace TimeTable
             }
         }
 
-        public void SearchMethod(int choice, Array data, string tempStr)
+        public void SearchLectureWithCondition(int choice, Array data, string tempStr)
         {
             while (!(choice == 1 || choice == 2 || choice == 3))
             {
@@ -211,7 +211,7 @@ namespace TimeTable
             rowCount = data.GetLength(0);   //get the first dimension size
             columnCount = data.GetLength(1);    //get the second dimension size
 
-            SearchMethod(choice, data, tempStr);
+            SearchLectureWithCondition(choice, data, tempStr);
 
             while (true)
             {
@@ -448,7 +448,7 @@ namespace TimeTable
             rowCount = data.GetLength(0);   //get the first dimension size
             columnCount = data.GetLength(1);    //get the second dimension size
 
-            SearchMethod(choice, data, tempStr);
+            SearchLectureWithCondition(choice, data, tempStr);
 
             //Print the entire list of the favorite lecture
             while (true)

@@ -166,10 +166,7 @@ namespace TimeTable.DB
                 cmd.Transaction = tran;
 
                 //쿼리 생성 : Insert 쿼리
-                //cmd.CommandText = "INSERT INTO Users VALUES(101939,'박준규','1234qwer','010-4242-3843','junkyu@naver.com',0,0)";
-                //cmd.CommandText = "INSERT INTO Users VALUES(000000,'관리자','00000000','010-0000-0000','admin@gmail.com',1,0)";
-
-
+               
                 cmd.CommandText = "INSERT INTO Users VALUES(" + param_SignUpForm.User_id +
                                                            ",'" + param_SignUpForm.User_name +
                                                            "','" + param_SignUpForm.User_passwd +
