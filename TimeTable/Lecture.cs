@@ -26,7 +26,11 @@ namespace TimeTable
         const int START_NO = 1846;
         const int FINISH_NO = 2003;
 
-        public void ShowListOfLectures(Array paramData, string paramStr)
+        const int LECTURE_NAME = 5; //교과목명
+        const int COURSE_CODE = 3; //학수번호
+        const int PROFESSOR_NAME = 10; //교수명
+
+        public void ShowListOfLectures(Array paramData, string searchStr, int searchType)
         {
             int rowCount = paramData.GetLength(0); //get the first dimension size
             int columnCount = paramData.GetLength(1); //get the second dimension size
@@ -37,7 +41,7 @@ namespace TimeTable
             Console.WriteLine("───────────────────────────────────────────────────────────────────────");
             for (i = 2; i <= rowCount; i++)
             {
-                if (((paramData.GetValue(i, 2).Equals("컴퓨터공학과") || paramData.GetValue(i, 2).Equals("디지털콘텐츠학과"))) && paramData.GetValue(i, 5).ToString().Contains(paramStr))
+                if (((paramData.GetValue(i, 2).Equals("컴퓨터공학과") || paramData.GetValue(i, 2).Equals("디지털콘텐츠학과"))) && paramData.GetValue(i, searchType).ToString().Contains(searchStr))
                 {
                     //더러운 코드 죄송합니다........... For handling null data........
                     Console.Write("│");
@@ -76,7 +80,7 @@ namespace TimeTable
 
                 Array data = ReturnExcelDataArray();
 
-                ShowListOfLectures(data, paramStr); //print the entire list of the lectures
+                ShowListOfLectures(data, paramStr, LECTURE_NAME); //print the entire list of the lectures
 
                 Console.Write("아무키나 입력");
                 Console.ReadLine();
@@ -151,26 +155,63 @@ namespace TimeTable
             }
         }
 
+        public void SearchMethod(int choice, Array data, string tempStr)
+        {
+            while (!(choice == 1 || choice == 2 || choice == 3))
+            {
+                homeService.Clear();
+
+                Console.WriteLine("-검색 조건- \n");
+                Console.WriteLine("1. 교과목 명");
+                Console.WriteLine("2. 학수번호");
+                Console.WriteLine("3. 교수명\n");
+                Console.Write("선택 : ");
+
+                choice = jkAppExceptions.GetDigit();
+
+                homeService.Clear();
+
+                switch (choice)
+                {
+                    case 1: //교과목 명으로 검색1
+                        Console.Write("교과목 명 : ");
+                        tempStr = Console.ReadLine();
+                        ShowListOfLectures(data, tempStr, LECTURE_NAME); //print the entire list of 3he lectures
+                        break;
+                    case 2: //학수번호로 검색
+                        Console.Write("학수번호 : ");
+                        tempStr = Console.ReadLine();
+                        ShowListOfLectures(data, tempStr, COURSE_CODE); //print the entire list of 3he lectures
+                        break;
+                    case 3: //교수명으로 검색
+                        Console.Write("교수명 : ");
+                        tempStr = Console.ReadLine();
+                        ShowListOfLectures(data, tempStr, PROFESSOR_NAME); //print the entire list of 3he lectures
+                        break;
+                    default:
+                        Console.WriteLine("다시입력");
+                        break;
+                }
+            }
+        }
+
         public void RegisterFavoriteLecture(LoggedInUser paramLoggedInUser)
         {
             const int MAX_F_GRADE_SUM = 25;
+
             int userID = paramLoggedInUser.User.User_id;
             int tempNum, rowCount, columnCount, grade = 0, totalGrade = 0, i, j;
+            int choice = 0;
             string tempStr = null;
             Enrollment enrollment = null;
             Array data = null;
 
-            homeService.Clear();
-
-            Console.Write("1. 교과목명 검색 : ");
-
-            tempStr = Console.ReadLine();
             data = ReturnExcelDataArray();
 
             rowCount = data.GetLength(0);   //get the first dimension size
             columnCount = data.GetLength(1);    //get the second dimension size
 
-            ShowListOfLectures(data, tempStr); //print the entire list of 3he lectures
+            SearchMethod(choice, data, tempStr);
 
             while (true)
             {
@@ -396,23 +437,18 @@ namespace TimeTable
         {
             int tempInt = 0, grade = 0, totalGrade = 0, rowCount, columnCount, i, j;
             int userID = paramLoggedInUser.User.User_id;
+            int choice = 0;
             const int MAX_GRADE_SUM = 18;
             string tempStr = null;
             Enrollment enrollment = null;
             Array data = null;
 
-            homeService.Clear();
-
-            Console.Write("                                 1. 강의명 검색 ");
-            tempStr = Console.ReadLine();
-
             data = ReturnExcelDataArray();
 
-            rowCount = data.GetLength(0); //get the first dimension size
-            columnCount = data.GetLength(1); //get the second dimension size
+            rowCount = data.GetLength(0);   //get the first dimension size
+            columnCount = data.GetLength(1);    //get the second dimension size
 
-            //print the entire list of the lectures
-            ShowListOfLectures(data, tempStr);
+            SearchMethod(choice, data, tempStr);
 
             //Print the entire list of the favorite lecture
             while (true)
@@ -625,7 +661,7 @@ namespace TimeTable
                 //    isNotSameTime = true;
                 //    break;
                 //}
-                if(IsNotOverlapped(willBeRegisteredTime1, willBeRegisteredTime2, registeredTime1, registeredTime2))
+                if (IsNotOverlapped(willBeRegisteredTime1, willBeRegisteredTime2, registeredTime1, registeredTime2))
                 {
                     isNotSameTime = true;
                 }
