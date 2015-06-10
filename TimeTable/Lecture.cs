@@ -26,6 +26,7 @@ namespace TimeTable
         const int START_NO = 1846;
         const int FINISH_NO = 2003;
 
+        const int MAJOR_NAME = 2; //학과명
         const int LECTURE_NAME = 5; //교과목명
         const int COURSE_CODE = 3; //학수번호
         const int PROFESSOR_NAME = 10; //교수명
@@ -41,7 +42,9 @@ namespace TimeTable
             Console.WriteLine("───────────────────────────────────────────────────────────────────────");
             for (i = 2; i <= rowCount; i++)
             {
-                if (((paramData.GetValue(i, 2).Equals("컴퓨터공학과") || paramData.GetValue(i, 2).Equals("디지털콘텐츠학과"))) && paramData.GetValue(i, searchType).ToString().Contains(searchStr))
+                if (((paramData.GetValue(i, MAJOR_NAME).Equals("컴퓨터공학과") || 
+                paramData.GetValue(i, MAJOR_NAME).Equals("디지털콘텐츠학과"))) && 
+                paramData.GetValue(i, searchType).ToString().Contains(searchStr))
                 {
                     //For handling null data........
                     Console.Write("│");
@@ -325,7 +328,7 @@ namespace TimeTable
                 enrollmentDBService.SelectLecture(paramLoggedInUser.Con, paramLoggedInUser.User.User_id);
 
                 Console.WriteLine("                                 1. 관심과목중에서 신청 ");
-                Console.WriteLine("                                 2. 과목명으로 검색하여 신청 ");
+                Console.WriteLine("                                 2. 검색하여 신청 ");
                 Console.WriteLine("                                 3. 수강 삭제");
                 Console.WriteLine("                                 4. 뒤로 가기  ");
                 Console.Write("\n\n                                  메뉴 선택 (한자리 숫자만 입력가능) : ");
